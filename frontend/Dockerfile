@@ -1,13 +1,17 @@
-FROM node:14-alpine AS build
-WORKDIR /app
-COPY package*.json /app
-RUN npm install
-COPY . /app
-RUN npm run build 
+FROM node:14 AS build
 
-FROM node:14-alpine AS prod
 WORKDIR /app
-COPY --from=build /app/build ./build
-COPY --from=build /app/package*.json ./
+
+COPY package.json package.json
+
+COPY package-lock.json package-lock.json
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
 EXPOSE 8080
+
 CMD ["npm", "run", "dev"]
